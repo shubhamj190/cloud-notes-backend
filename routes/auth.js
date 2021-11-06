@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+var bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
+var jwt = require('jsonwebtoken');
+const JWT_SECRET="redminote3kenzopocophonepocof1"
 
 // create user with /api/auth dosen't require auth
 
@@ -32,15 +35,29 @@ router.post(
           .status(401)
           .json({ errors: "Duplicate entries are not allowed." });
       } else {
+        const salt = await bcrypt.genSalt(10);
+        const secupassword = await bcrypt.hash(req.body.password, salt);
+
         user = await User.create({
           name: req.body.name,
           email: req.body.email,
-          password: req.body.password,
+          password: secupassword,
         });
-        res.json({ messge: "User created successfully" });
+
+        const data={
+          id:user._id
+        }
+
+        const jwtData= jwt.sign(data, JWT_SECRET);
+        // console.log(data)
+        // console.log(jwtData)
+
+        res.json({jwtData});
       }
     } catch (error) {
-        res.status(500).send("Internal server error 500")
+      res
+        .status(500)
+        .json({ message: "Internal server error 500", error: error });
     }
   }
 );
