@@ -5,6 +5,7 @@ var bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
 var jwt = require("jsonwebtoken");
 const JWT_SECRET = "redminote3kenzopocophonepocof1";
+const fetchuser=require('../middleware/fetchUser')
 
 // create user with /api/auth dosen't require auth
 
@@ -79,8 +80,8 @@ router.post(
 
     const { email, password } = req.body;
     try {
-      let user =await User.findOne({ email });
-      console.log(user.password)
+      let user = await User.findOne({ email });
+      // console.log(user.password);
 
       if (!email) {
         return res
@@ -108,5 +109,19 @@ router.post(
     }
   }
 );
+// <---------------------------------------------------------------------------------------------------------------->
+// get all the information of the logged user using the path /api/auth/getuser
+router.post("/getuser/", fetchuser, async (req, res) => {
+  try {
+    userID=req.user
+    console.log(req.user.id)
+    const user= await User.findById(userID).select('-password')
+    res.json(user)
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error 500", error: error });
+  }
+});
 
 module.exports = router;
