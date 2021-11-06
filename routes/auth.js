@@ -3,13 +3,13 @@ const router = express.Router();
 const User = require("../models/User");
 var bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
-var jwt = require('jsonwebtoken');
-const JWT_SECRET="redminote3kenzopocophonepocof1"
+var jwt = require("jsonwebtoken");
+const JWT_SECRET = "redminote3kenzopocophonepocof1";
 
 // create user with /api/auth dosen't require auth
 
 router.post(
-  "/",
+  "/createuser/",
   [
     body("email", "Enter a valid email").isEmail(),
     body("password", "passwaord length should be minimum 5 chars").isLength({
@@ -44,16 +44,63 @@ router.post(
           password: secupassword,
         });
 
-        const data={
-          id:user._id
-        }
+        const data = {
+          id: user._id,
+        };
 
-        const jwtData= jwt.sign(data, JWT_SECRET);
-        // console.log(data)
-        // console.log(jwtData)
+        const jwtData = jwt.sign(data, JWT_SECRET);
 
-        res.json({jwtData});
+        res.json({ jwtData });
       }
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Internal server error 500", error: error });
+    }
+  }
+);
+// <---------------------------------------------------------------------------------------------------------------->
+// authenticate a user using /api/auth/login
+router.post(
+  "/login/",
+  [
+    body("email", "Enter a valid email").isEmail(),
+    body("password", "password cannot be blanked").exists({
+      min: 5,
+    }),
+  ],
+  async (req, res) => {
+    // if there are any error it will throw the error witht the status
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, password } = req.body;
+    try {
+      let user =await User.findOne({ email });
+      console.log(user.password)
+
+      if (!email) {
+        return res
+          .status(400)
+          .json({ message: "please login with correct credentials1" });
+      }
+      const comparePassword = await bcrypt.compare(password, user.password);
+
+      if (!comparePassword) {
+        return res
+          .status(400)
+          .json({ message: "please login with correct credentials2" });
+      }
+
+      const data = {
+        id: user._id,
+      };
+      const jwtData = jwt.sign(data, JWT_SECRET);
+
+      res.json({ jwtData });
     } catch (error) {
       res
         .status(500)
