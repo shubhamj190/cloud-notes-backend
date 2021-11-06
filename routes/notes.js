@@ -82,12 +82,16 @@ router.put(
         return res.status(404).send("not found");
       }
       if (note.user.toString() !== req.user) {
-        console.log("this is true")
+        console.log("this is true");
         return res.status(401).send("access denied");
       }
-      note=await Notes.findByIdAndUpdate(req.params.id, {$set:newNote}, {new:true})
-      console.log("this isa note",note)
-      res.json({note})
+      note = await Notes.findByIdAndUpdate(
+        req.params.id,
+        { $set: newNote },
+        { new: true }
+      );
+      console.log("this isa note", note);
+      res.json({ note });
     } catch (error) {
       res
         .status(500)
@@ -96,4 +100,27 @@ router.put(
   }
 );
 
+// <-------------------------------------------------------------------------------------------------------->
+// Route 4: delete notes notes using delete request login required
+router.delete("/deletenote/:id", fetchuser, async (req, res) => {
+  try {
+    // find the note to be deleted
+
+    let note = await Notes.findById(req.params.id);
+    if (!note) {
+      return res.status(404).send("not found");
+    }
+    if (note.user.toString() !== req.user) {
+      console.log("this is true");
+      return res.status(401).send("access denied");
+    }
+    note = await Notes.findByIdAndDelete();
+    
+    res.json({ "success":"note has been deleted " });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error 500", error: error });
+  }
+});
 module.exports = router;
