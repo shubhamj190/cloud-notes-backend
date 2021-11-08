@@ -2,10 +2,12 @@ const connectTOMongo = require('./db')
 connectTOMongo()
 const express = require('express')
 const app = express()
+var cors = require('cors')
 const port = 5000
 
 // middleware
 app.use(express.json())
+app.use(cors())
 
 //   avilable routes
 app.use('/api/auth/', require('./routes/auth'))
