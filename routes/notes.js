@@ -114,7 +114,7 @@ router.delete("/deletenote/:id", fetchuser, async (req, res) => {
       console.log("this is true");
       return res.status(401).send("access denied");
     }
-    note = await Notes.findByIdAndDelete();
+    note = await Notes.findByIdAndDelete(req.params.id);
     
     res.json({ "success":"note has been deleted " });
   } catch (error) {
