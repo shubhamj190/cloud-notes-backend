@@ -123,4 +123,28 @@ router.delete("/deletenote/:id", fetchuser, async (req, res) => {
       .json({ message: "Internal server error 500", error: error });
   }
 });
+
+// <-------------------------------------------------------------------------------------------------------->
+// Route 5: get single note for all the operations
+router.get("/getsinglenote/:id", fetchuser, async (req, res) => {
+  try {
+    // find the note to be deleted
+
+    let note = await Notes.findById(req.params.id);
+    if (!note) {
+      return res.status(404).send("not found");
+    }
+    if (note.user.toString() !== req.user) {
+      console.log("this is true");
+      return res.status(401).send("access denied");
+    }
+    note = await Notes.findById(req.params.id);
+    
+    res.json(note);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error 500", error: error });
+  }
+});
 module.exports = router;
