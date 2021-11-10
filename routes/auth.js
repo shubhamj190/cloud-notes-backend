@@ -72,10 +72,10 @@ router.post(
   ],
   async (req, res) => {
     // if there are any error it will throw the error witht the status
-
+    let success=false
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({success, errors: errors.array() });
     }
 
     const { email, password } = req.body;
@@ -86,22 +86,22 @@ router.post(
       if (!email) {
         return res
           .status(400)
-          .json({ message: "please login with correct credentials1" });
+          .json({success, message: "please login with correct credentials1" });
       }
       const comparePassword = await bcrypt.compare(password, user.password);
 
       if (!comparePassword) {
         return res
           .status(400)
-          .json({ message: "please login with correct credentials2" });
+          .json({ success, message: "please login with correct credentials2" });
       }
-
+      success=true
       const data = {
         id: user._id,
       };
       const jwtData = jwt.sign(data, JWT_SECRET);
-
-      res.json({ jwtData });
+      success=true
+      res.json({ jwtData , success});
     } catch (error) {
       res
         .status(500)
