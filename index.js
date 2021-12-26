@@ -4,7 +4,7 @@ connectTOMongo()
 const express = require('express')
 const app = express()
 var cors = require('cors')
-const port = prcess.env.PORT || 5000
+const port = process.env.PORT || 5000
 
 // middleware
 app.use(express.json())
