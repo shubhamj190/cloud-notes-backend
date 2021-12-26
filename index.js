@@ -1,3 +1,4 @@
+require('dotenv').config()
 const connectTOMongo = require('./db')
 connectTOMongo()
 const express = require('express')

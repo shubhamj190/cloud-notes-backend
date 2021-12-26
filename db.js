@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const mongooseURI  = "mongodb://localhost:27017/cloud-notes?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false"
+const mongooseURI  = process.env.MONGO_DB
 
 main().catch(err => console.log(err));
 

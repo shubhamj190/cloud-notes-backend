@@ -49,7 +49,7 @@ router.post(
           id: user._id,
         };
 
-        const jwtData = jwt.sign(data, JWT_SECRET);
+        const jwtData = jwt.sign(data, process.env.JWT_SECRET);
 
         res.json({ jwtData });
       }
@@ -99,7 +99,7 @@ router.post(
       const data = {
         id: user._id,
       };
-      const jwtData = jwt.sign(data, JWT_SECRET);
+      const jwtData = jwt.sign(data, process.env.JWT_SECRET);
       success=true
       res.json({ jwtData , success});
     } catch (error) {
